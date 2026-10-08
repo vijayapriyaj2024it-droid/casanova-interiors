@@ -1,3 +1,4 @@
+const API_URL = "https://casanova-interiors.onrender.com";
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Mobile Navigation Toggle
   const hamburger = document.querySelector(".hamburger");
@@ -177,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-          const response = await fetch("http://localhost:5000/api/enquiries", {
+          const response = await fetch(`${API_URL}/api/enquiries`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
