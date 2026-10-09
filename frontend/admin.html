@@ -59,14 +59,56 @@
 
     async function loadEnquiries() {
       const tbody = document.getElementById("enquiriesTableBody");
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-msg">Connecting to server (Render cold start may take ~30s)...</td></tr>`;
+
       try {
         const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        
         const result = await res.json();
+        
+        // Supports both raw array and wrapped object responses
+        const data = Array.isArray(result) ? result : (result.data || []);
 
-        if (result.success && result.data.length > 0) {
-          tbody.innerHTML = result.data.map(q => `
+        if (data.length > 0) {
+          tbody.innerHTML = data.map(q => `
             <tr>
-              <td>${new Date(q.createdAt).toLocaleDateString()}</td>
-              <td><strong>${q.name}</strong></td>
-              <td>${q.email}</td>
-              <td>${q.phone}</td>
+              <td>${q.createdAt ? new Date(q.createdAt).toLocaleDateString() : 'N/A'}</td>
+              <td><strong>${q.name || 'N/A'}</strong></td>
+              <td>${q.email || 'N/A'}</td>
+              <td>${q.phone || 'N/A'}</td>
+              <td>${q.projectType || q.service || 'General'}</td>
+              <td>${q.budget || 'N/A'}</td>
+              <td>${q.message || '-'}</td>
+              <td><button class="btn-delete" onclick="deleteEnquiry('${q._id}')"><i class="fa-solid fa-trash"></i> Delete</button></td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="8" class="empty-msg">No enquiries found in MongoDB database.</td></tr>`;
+        }
+      } catch (err) {
+        console.error("Error fetching enquiries:", err);
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-msg" style="color:red;">Failed to connect to backend API server. Ensure Render server is active.</td></tr>`;
+      }
+    }
+
+    async function deleteEnquiry(id) {
+      if (confirm("Are you sure you want to delete this enquiry?")) {
+        try {
+          const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+          const result = await res.json();
+          if (result.success) {
+            loadEnquiries();
+          } else {
+            alert(result.message);
+          }
+        } catch (err) {
+          alert("Error deleting enquiry.");
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadEnquiries);
+  </script>
+</body>
+</html>
