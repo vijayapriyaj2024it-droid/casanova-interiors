@@ -54,7 +54,8 @@
   </div>
 
   <script>
-    const API_URL = "http://localhost:5000/api/enquiries";
+    // Live Render Backend Endpoint
+    const API_URL = "https://casanova-interiors.onrender.com/api/enquiries";
 
     async function loadEnquiries() {
       const tbody = document.getElementById("enquiriesTableBody");
@@ -69,37 +70,3 @@
               <td><strong>${q.name}</strong></td>
               <td>${q.email}</td>
               <td>${q.phone}</td>
-              <td>${q.projectType}</td>
-              <td>${q.budget}</td>
-              <td>${q.message || '-'}</td>
-              <td><button class="btn-delete" onclick="deleteEnquiry('${q._id}')"><i class="fa-solid fa-trash"></i> Delete</button></td>
-            </tr>
-          `).join('');
-        } else {
-          tbody.innerHTML = `<tr><td colspan="8" class="empty-msg">No enquiries found in MongoDB database.</td></tr>`;
-        }
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" class="empty-msg" style="color:red;">Failed to connect to backend API server. Ensure Node.js server is running.</td></tr>`;
-      }
-    }
-
-    async function deleteEnquiry(id) {
-      if (confirm("Are you sure you want to delete this enquiry?")) {
-        try {
-          const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-          const result = await res.json();
-          if (result.success) {
-            loadEnquiries();
-          } else {
-            alert(result.message);
-          }
-        } catch (err) {
-          alert("Error deleting enquiry.");
-        }
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", loadEnquiries);
-  </script>
-</body>
-</html>
