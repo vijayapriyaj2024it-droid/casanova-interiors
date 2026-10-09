@@ -1,4 +1,5 @@
 const API_URL = "https://casanova-interiors.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Mobile Navigation Toggle
   const hamburger = document.querySelector(".hamburger");
@@ -200,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         } catch (error) {
           console.error("Error submitting form:", error);
-          alert("Unable to connect to server. Please ensure backend server is running on port 5000.");
+          alert("Server is warming up or unreachable. Please wait 30 seconds and try submitting again.");
         }
       }
     });
